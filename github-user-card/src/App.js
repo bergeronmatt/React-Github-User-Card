@@ -1,26 +1,52 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import User from './components/User';
+import "./styles.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+constructor () {
+  super();
+  this.state ={
+    users: [],
+    followers: '',
+    following: ''
+  }
+  console.log('constructor is running')
+}
+
+componentDidMount() {
+  console.log('CDM is running')
+  axios
+    .get('https://api.github.com/users/bergeronmatt/followers')
+    .then(response => {
+      console.log("My follower data: ", response)
+      console.log("My follower count: ", response.data.length)
+      this.setState({
+        users: response.data 
+      })
+    })
+    .catch(error => console.log('Follower data not found: ', error))
+  
+}
+
+componentDidUpdate(prevState) {
+  if(prevState.users !== this.state.users){
+  console.log("CDU is running")
+  }
+}
+
+
+
+  render(){
+    return (
+      <div className="App">
+        <header className='header'>Github Followers</header>
+        <User user={this.state.users}/>
+      </div>
+    );
+  }
 }
 
 export default App;
